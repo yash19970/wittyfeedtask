@@ -40,9 +40,9 @@ class Admin extends CI_Controller
             $userid = $this->session->userdata('userid');
             $this->load->model('titlemodel');
             $data['value'] = $this->titlemodel->select_articles($userid);
-            
+            $this->load->view('admin/alldata',$data);
+           
         }
-
         public function profile(){
             $this->load->view('admin/updateprofile');
         }   
