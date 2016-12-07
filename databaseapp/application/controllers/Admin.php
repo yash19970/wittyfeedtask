@@ -37,8 +37,12 @@ class Admin extends CI_Controller
             if(!$this->session->userdata('userid')){
                 return redirect('login');
             }
-            $this->load->view('admin/alldata');
+            $userid = $this->session->userdata('userid');
+            $this->load->model('titlemodel');
+            $data['value'] = $this->titlemodel->select_articles($userid);
+            
         }
+
         public function profile(){
             $this->load->view('admin/updateprofile');
         }   
