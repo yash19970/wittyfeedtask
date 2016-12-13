@@ -20,6 +20,16 @@ All data:
 	<p>Salary:<input type="text" ng-model="empInfo.salary"></p>
 	<button type="submit">Insert! </button>
 </form>
+Update Values: <br>
+<input type="checkbox" ng-model="hidebox"> Update!
+<form ng-controller="updateCtrl" ng-submit="updateData(studentDetail);">
+<div ng-hide="!hidebox">
+	 old Name: <input type="text" ng-model="studentDetail.oldname">
+	 New Name: <input type="text" ng-model="studentDetail.newname">
+	 Salary: <input type="text" ng-model="studentDetail.salary"> 
+	<button type="submit">Update!</button>
+</div>
+</form>
 </body>
 </html>
 <script>
@@ -60,6 +70,28 @@ myapp.controller("deleteCtrl",function($scope,$http){
 			url : 'http://localhost/crudjs/index.php/Angulardata/deleteall',
 			headers : {'Content-Type' : 'application/json'},
 			data:JSON.stringify({"name" :name, "salary" : salary})
+		}) 
+		.success (function(response)
+		{
+			if(response.response == false)
+			{
+				alert("Problem Inserting data");
+			}
+		}) 
+	} 
+
+});
+myapp.controller("updateCtrl",function($scope,$http){
+	$scope.updateData = function(studentDetail){
+		var oldname = $scope.studentDetail.oldname;
+		var newname = $scope.studentDetail.newname;
+		var salary = $scope.studentDetail.salary;
+
+		$http({
+			method : 'POST',
+			url : 'http://localhost/crudjs/index.php/Angulardata/updateall',
+			headers : {'Content-Type' : 'application/json'},
+			data:JSON.stringify({"oldname" :oldname, "newname":newname, "salary":salary})
 		}) 
 		.success (function(response)
 		{
