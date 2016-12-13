@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<body ng-app="myModule">
+<div ng-controller="readCtrl">
+All data:
+  <div ng-repeat="student in students">
+  	<table>	
+  	<td>{{student.name}}</td> 
+  	<td>{{student.salary}}</td> 
+  </div>
+  </table>
+</div>
+
+
+<u>Inserting Data: </u>
+<form ng-controller="dataCtrl" ng-submit="insertData(empInfo);">
+	<p>Name : <input type="text" ng-model="empInfo.name"></p>
+	<p>Salary:<input type="text" ng-model="empInfo.salary"></p>
+	<button type="submit">Insert! </button>
+</form>
+</body>
+</html>
+<script>
+	var myapp = angular
+					.module("myModule",[])
+					.controller("readCtrl",function($scope,$http){
+					$http.get('http://localhost/crudjs/index.php/Angulardata/viewall')
+ 						 .then(function(response){
+ 							$scope.students = response.data; })
+						});
+myapp.controller("dataCtrl",function($scope,$http){
+	$scope.insertData = function(empInfo){
+		var name = $scope.empInfo.name;
+		var salary = $scope.empInfo.salary
+		$http({
+			method : 'POST',
+			url : 'http://localhost/crudjs/index.php/Angulardata/insertall',
+			headers : {'Content-Type' : 'application/json'},
+			data:JSON.stringify({"name" :name, "salary" : salary})
+		}) 
+		.success (function(response)
+		{
+			if(response.response == false)
+			{
+				alert("Problem Inserting data");
+			}
+		}) 
+	} 
+
+});
+</script>
