@@ -21,4 +21,22 @@ class Angulardata extends REST_Controller{
 		$query["response"] = $this->Angularmodel->insertalldata($data);
 		// $this->response($query);
 	}
+	public function updateall_post(){
+		$postdata = file_get_contents("php://input");
+		$request  = json_decode($postdata);
+		$name = $request->name;
+		$salary = $request->salary;
+		$this->load->model('Angularmodel');
+		$data = array('name'=>$name,'salary'=>$salary,'DOB'=>'1980-11-23T00','gender'=>'male');
+		$query["response"] = $this->Angularmodel->updatealldata($data,$name);
+		// $this->response($query);
+	}	
+	public function deleteall_post(){
+		$postdata = file_get_contents("php://input");
+		$request  = json_decode($postdata);
+		$name = $request->name;
+		$salary = $request->salary;
+		$this->load->model('Angularmodel');
+		$result = $this->Angularmodel->deletealldata($name,$salary);
+	}
 }?>

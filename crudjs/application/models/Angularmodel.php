@@ -19,4 +19,25 @@ class Angularmodel extends CI_Model{
 			return $res;
 		}
 	}
+	public function updatealldata($data,$name){
+		$result = $this->db->where('name',$name);
+		$result = $this->db->update('angular',$data);
+		if($result) {
+			$res = 'true';
+			return $res;
+		}else{
+			$res = 'false';
+			return $res;
+		}
+	}
+	public function deletealldata($name,$salary){
+		$result = $this->db->delete('angular',array('name'=>$name,'salary'=>$salary));
+		if($result) {
+			$res = 'true';
+			return $res;
+		}else{
+			$res = 'false';
+			return $res;
+		}
+	}
 }?>

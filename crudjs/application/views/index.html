@@ -5,14 +5,15 @@
 <div ng-controller="readCtrl">
 All data:
   <div ng-repeat="student in students">
-  	<table>	
+  	<table>
+  	<tr>	
   	<td>{{student.name}}</td> 
   	<td>{{student.salary}}</td> 
+  	<td> <button ng-click="deleteData(student)" ng-controller="deleteCtrl">Delete!</button> </td>
+</tr>
   </div>
   </table>
 </div>
-
-
 <u>Inserting Data: </u>
 <form ng-controller="dataCtrl" ng-submit="insertData(empInfo);">
 	<p>Name : <input type="text" ng-model="empInfo.name"></p>
@@ -36,6 +37,27 @@ myapp.controller("dataCtrl",function($scope,$http){
 		$http({
 			method : 'POST',
 			url : 'http://localhost/crudjs/index.php/Angulardata/insertall',
+			headers : {'Content-Type' : 'application/json'},
+			data:JSON.stringify({"name" :name, "salary" : salary})
+		}) 
+		.success (function(response)
+		{
+			if(response.response == false)
+			{
+				alert("Problem Inserting data");
+			}
+		}) 
+	} 
+
+});
+myapp.controller("deleteCtrl",function($scope,$http){
+	$scope.deleteData = function(student){
+		var name = $scope.student.name;
+		var salary = $scope.student.salary;
+
+		$http({
+			method : 'POST',
+			url : 'http://localhost/crudjs/index.php/Angulardata/deleteall',
 			headers : {'Content-Type' : 'application/json'},
 			data:JSON.stringify({"name" :name, "salary" : salary})
 		}) 
