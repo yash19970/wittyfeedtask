@@ -1,30 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.min.js"></script>
-<body ng-app="myModule" ng-controller="readCtrl" >
-<div ng-init = "initFirst()">
+<body ng-app="myModule">
+<div ng-controller="readCtrl">
 All data:
   <div ng-repeat="student in students">
-  		<table>
-		  	<tr>	
-		  	<td>{{student.name}}</td> 
-		  	<td>{{student.salary}}</td> 
-		  	<td> <button ng-click="deleteData(student)">Delete!</button> </td>
-		  	<td> <button ng-click="updateData(student)">Update!</button> </td>
-			</tr>
-  		</table>
+  	<table>
+  	<tr>	
+  	<td>{{student.name}}</td> 
+  	<td>{{student.salary}}</td> 
+  	<td> <button ng-click="deleteData(student)" ng-controller="deleteCtrl">Delete!</button> </td>
+</tr>
   </div>
+  </table>
 </div>
 <u>Inserting Data: </u>
-<form  ng-submit="insertData(empInfo);">
+<form ng-controller="dataCtrl" ng-submit="insertData(empInfo);">
 	<p>Name : <input type="text" ng-model="empInfo.name"></p>
 	<p>Salary:<input type="text" ng-model="empInfo.salary"></p>
 	<button type="submit">Insert! </button>
 </form>
 Update Values: <br>
 <input type="checkbox" ng-model="hidebox"> Update!
-<form ng-submit="updateData(studentDetail);">
+<form ng-controller="updateCtrl" ng-submit="updateData(studentDetail);">
 <div ng-hide="!hidebox">
 	 old Name: <input type="text" ng-model="studentDetail.oldname">
 	 New Name: <input type="text" ng-model="studentDetail.newname">
@@ -49,69 +48,15 @@ Update Values: <br>
 	    return {
 	        read_data: read_data 
 	    };
-	}]);	
-
-myapp.controller("readCtrl",function($scope,$http,getDataFromDb) {
-	myapp.config()
-	$scope.initFirst=function()
-	{
+	}]);
+					
+	myapp.controller("readCtrl",function($scope,$http,getDataFromDb) {
 		getDataFromDb.read_data().then(function(response) {
-			$scope.students = response;	
-	    })
-	}
+			$scope.students = response;
+    });
+});
 
-	$scope.deleteData = function(student) {
-		var name = student.name;
-		var salary = student.salary;
-		$http({
-			method : 'POST',
-			url : 'http://localhost/crudjs/index.php/Angulardata/deleteall',
-			headers : {'Content-Type' : 'application/json'},
-			data:JSON.stringify({"name" :name, "salary" : salary})
-		}) 
-		.success (function(response)
-		{
-			if(response.response == false)
-			{
-				alert("Problem Inserting data");
-			}else{
-				getDataFromDb.read_data().then(function(response) {
-				$scope.students = response;
-				console.log(response);
-    		}); 
-			}
-		});
-	}
-
-	$scope.updateData = function(studentDetail){
-		var oldname = $scope.studentDetail.oldname;
-		var newname = $scope.studentDetail.newname;
-		var salary = $scope.studentDetail.salary;
-
-		$http({
-			method : 'POST',
-			url : 'http://localhost/crudjs/index.php/Angulardata/updateall',
-			headers : {'Content-Type' : 'application/json'},
-			data:JSON.stringify({"oldname" :oldname, "newname":newname, "salary":salary})
-		}) 
-		.success (function(response)
-		{
-			if(response.response == false)
-			{
-				alert("Problem Inserting data");
-			}else{
-					getDataFromDb.read_data().then(function(response) {
-					$scope.students = response;
-    			});
-			}
-
-		$scope.studentDetail.oldname = '';
-		$scope.studentDetail.newname = '';
-		$scope.studentDetail.salary = '';
-
-
-		}) 
-	}
+myapp.controller("dataCtrl",function($scope,$http,$route,getDataFromDb){
 	$scope.insertData = function(empInfo){
 		var name = $scope.empInfo.name;
 		var salary = $scope.empInfo.salary
@@ -131,9 +76,54 @@ myapp.controller("readCtrl",function($scope,$http,getDataFromDb) {
 					$scope.students = response;
     			}); 
 			}
-			$scope.empInfo.name = '';
-			$scope.empInfo.salary = '';
 		}); 
 	}
+
+});
+myapp.controller("deleteCtrl",function($scope,$http,getDataFromDb){
+	$scope.deleteData = function(student){
+		var name = $scope.student.name;
+		var salary = $scope.student.salary;
+		$http({
+			method : 'POST',
+			url : 'http://localhost/crudjs/index.php/Angulardata/deleteall',
+			headers : {'Content-Type' : 'application/json'},
+			data:JSON.stringify({"name" :name, "salary" : salary})
+		}) 
+		.success (function(response)
+		{
+			if(response.response == false)
+			{
+				alert("Problem Inserting data");
+			}else{
+				getDataFromDb.read_data().then(function(response) {
+				$scope.students = response;
+    		}); 
+			}
+		});
+	} 
+
+});
+myapp.controller("updateCtrl",function($scope,$http){
+	$scope.updateData = function(studentDetail){
+		var oldname = $scope.studentDetail.oldname;
+		var newname = $scope.studentDetail.newname;
+		var salary = $scope.studentDetail.salary;
+
+		$http({
+			method : 'POST',
+			url : 'http://localhost/crudjs/index.php/Angulardata/updateall',
+			headers : {'Content-Type' : 'application/json'},
+			data:JSON.stringify({"oldname" :oldname, "newname":newname, "salary":salary})
+		}) 
+		.success (function(response)
+		{
+			if(response.response == false)
+			{
+				alert("Problem Inserting data");
+			}
+		}) 
+	} 
+
 });
 </script>
