@@ -40,7 +40,4 @@ class Angulardata extends REST_Controller{
 		$this->load->model('Angularmodel');
 		$result = $this->Angularmodel->deletealldata($name,$salary);
 	}
-	/*public function updateview(){
-		$this->load->view('updateview.html');
-	}*/
 }?>

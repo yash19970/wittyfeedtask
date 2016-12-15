@@ -11,7 +11,15 @@ All data:
 		  	<td>{{student.name}}</td> 
 		  	<td>{{student.salary}}</td> 
 		  	<td> <button ng-click="deleteData(student)">Delete!</button> </td>
-		  	<td> <button ng-click="updateData(student)">Update!</button> </td>
+<!-- 		  	<td> <button ng-click="updateData(student)">Update!</button> </td>
+ -->			<td>
+ 				<form ng-submit="updateData(studentDetail,student);">
+				<div>
+				New Name: <input type="text" ng-model="studentDetail.newname">
+				Salary: <input type="text" ng-model="studentDetail.salary"> 
+				<button type="submit">Update!</button>
+			</div>
+			</form> </td>
 			</tr>
   		</table>
   </div>
@@ -22,16 +30,16 @@ All data:
 	<p>Salary:<input type="text" ng-model="empInfo.salary"></p>
 	<button type="submit">Insert! </button>
 </form>
-Update Values: <br>
-<input type="checkbox" ng-model="hidebox"> Update!
-<form ng-submit="updateData(studentDetail);">
+<!-- <input type="checkbox" ng-model="hidebox"> Update!
+ -->
+ <!-- <form ng-submit="updateData(studentDetail);">
 <div ng-hide="!hidebox">
 	 old Name: <input type="text" ng-model="studentDetail.oldname">
 	 New Name: <input type="text" ng-model="studentDetail.newname">
 	 Salary: <input type="text" ng-model="studentDetail.salary"> 
 	<button type="submit">Update!</button>
 </div>
-</form>
+</form> -->
 </body>
 </html>
 <script>
@@ -83,11 +91,10 @@ myapp.controller("readCtrl",function($scope,$http,getDataFromDb) {
 		});
 	}
 
-	$scope.updateData = function(studentDetail){
-		var oldname = $scope.studentDetail.oldname;
-		var newname = $scope.studentDetail.newname;
-		var salary = $scope.studentDetail.salary;
-
+	$scope.updateData = function(studentDetail,student){
+		var oldname = student.name;
+		var newname = studentDetail.newname;
+		var salary = studentDetail.salary;
 		$http({
 			method : 'POST',
 			url : 'http://localhost/crudjs/index.php/Angulardata/updateall',
@@ -104,12 +111,6 @@ myapp.controller("readCtrl",function($scope,$http,getDataFromDb) {
 					$scope.students = response;
     			});
 			}
-
-		$scope.studentDetail.oldname = '';
-		$scope.studentDetail.newname = '';
-		$scope.studentDetail.salary = '';
-
-
 		}) 
 	}
 	$scope.insertData = function(empInfo){
