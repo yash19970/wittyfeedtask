@@ -19,8 +19,8 @@ class Angularmodel extends CI_Model{
 			return $res;
 		}
 	}
-	public function updatealldata($data,$oldname){
-		$result = $this->db->where('name',$oldname);
+	public function updatealldata($data,$id){
+		$result = $this->db->where('id',$id);
 		$result = $this->db->update('angular',$data);
 		if($result) {
 			$res = 'true';

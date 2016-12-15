@@ -4,42 +4,34 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.min.js"></script>
 <body ng-app="myModule" ng-controller="readCtrl" >
 <div ng-init = "initFirst()">
-All data:
+<h2> All data: </h2>
   <div ng-repeat="student in students">
   		<table>
-		  	<tr>	
+		  	<tr>
+		  	<td ng-hide=true>{{student.id}}</td>	
 		  	<td>{{student.name}}</td> 
 		  	<td>{{student.salary}}</td> 
 		  	<td> <button ng-click="deleteData(student)">Delete!</button> </td>
-<!-- 		  	<td> <button ng-click="updateData(student)">Update!</button> </td>
- -->			<td>
- 				<form ng-submit="updateData(studentDetail,student);">
-				<div>
-				New Name: <input type="text" ng-model="studentDetail.newname">
-				Salary: <input type="text" ng-model="studentDetail.salary"> 
-				<button type="submit">Update!</button>
-			</div>
-			</form> </td>
+		  	<td> <button ng-click="insertData(empInfo,2,student)">Update!</button> </td>
 			</tr>
   		</table>
   </div>
 </div>
-<u>Inserting Data: </u>
-<form  ng-submit="insertData(empInfo);">
+<div>
+<h2>Inserting Data: </h2>
+<form  ng-submit="insertData(empInfo,1,student);" ng-if="!updatev">
+	<p><input type="hidden" ng-model="empInfo.id"></p>
 	<p>Name : <input type="text" ng-model="empInfo.name"></p>
 	<p>Salary:<input type="text" ng-model="empInfo.salary"></p>
-	<button type="submit">Insert! </button>
+	<button type="submit" ng-if="true">Insert! </button>
 </form>
-<!-- <input type="checkbox" ng-model="hidebox"> Update!
- -->
- <!-- <form ng-submit="updateData(studentDetail);">
-<div ng-hide="!hidebox">
-	 old Name: <input type="text" ng-model="studentDetail.oldname">
-	 New Name: <input type="text" ng-model="studentDetail.newname">
-	 Salary: <input type="text" ng-model="studentDetail.salary"> 
-	<button type="submit">Update!</button>
+<form  ng-submit="updateData(empInfo);" ng-if="updatev">
+	<p><input type="hidden" ng-model="empInfo.id"></p>
+	<p>Name : <input type="text" ng-model="empInfo.name"></p>
+	<p>Salary:<input type="text" ng-model="empInfo.salary"></p>
+	<button type="submit" ng-if="true">Update!</button>
+</form>
 </div>
-</form> -->
 </body>
 </html>
 <script>
@@ -60,14 +52,17 @@ All data:
 	}]);	
 
 myapp.controller("readCtrl",function($scope,$http,getDataFromDb) {
-	myapp.config()
+		$scope.empInfo = [];
+		$scope.empInfo.id = '';
+		$scope.empInfo.name = '';
+		$scope.empInfo.salary = '';
+
 	$scope.initFirst=function()
 	{
 		getDataFromDb.read_data().then(function(response) {
 			$scope.students = response;	
 	    })
-	}
-
+	}		
 	$scope.deleteData = function(student) {
 		var name = student.name;
 		var salary = student.salary;
@@ -90,8 +85,66 @@ myapp.controller("readCtrl",function($scope,$http,getDataFromDb) {
 			}
 		});
 	}
+	$scope.insertData = function(empInfo,number,student){
+		if(number ==1) {
+			var name = $scope.empInfo.name;
+			var salary = $scope.empInfo.salary;
 
-	$scope.updateData = function(studentDetail,student){
+			$http({
+				method : 'POST',
+				url : 'http://localhost/crudjs/index.php/Angulardata/insertall',
+				headers : {'Content-Type' : 'application/json'},
+				data:JSON.stringify({"name" :name, "salary" : salary})
+			}) 
+			.success (function(response)
+			{
+				if(response.response == false)
+				{
+					alert("Problem Inserting data");
+				}else{
+						getDataFromDb.read_data().then(function(response) {
+						$scope.students = response;
+	    			}); 
+				}
+				$scope.empInfo.name = '';
+				$scope.empInfo.salary = '';
+			}); 
+		}else{
+			$scope.updatev = true;
+			$scope.empInfo.id = student.id;
+			$scope.empInfo.name = student.name;
+			$scope.empInfo.salary = student.salary;
+		}
+	}
+
+$scope.updateData = function(empInfo){
+	var id = empInfo.id;
+	var name = empInfo.name;
+	var salary = empInfo.salary;
+	console.log(name);
+	console.log(salary);
+		$http({
+			method : 'POST',
+			url : 'http://localhost/crudjs/index.php/Angulardata/updateall',
+			headers : {'Content-Type' : 'application/json'},
+			data:JSON.stringify({"id" :id, "name":name, "salary":salary})
+		}) 
+		.success (function(response)
+		{
+			if(response.response == false)
+			{
+				alert("Problem Inserting data");
+			}else{
+					getDataFromDb.read_data().then(function(response) {
+					$scope.students = response;
+    			});
+			}
+		}) 
+	}
+
+});
+
+/*$scope.updateData = function(studentDetail,student){
 		var oldname = student.name;
 		var newname = studentDetail.newname;
 		var salary = studentDetail.salary;
@@ -112,29 +165,5 @@ myapp.controller("readCtrl",function($scope,$http,getDataFromDb) {
     			});
 			}
 		}) 
-	}
-	$scope.insertData = function(empInfo){
-		var name = $scope.empInfo.name;
-		var salary = $scope.empInfo.salary
-		$http({
-			method : 'POST',
-			url : 'http://localhost/crudjs/index.php/Angulardata/insertall',
-			headers : {'Content-Type' : 'application/json'},
-			data:JSON.stringify({"name" :name, "salary" : salary})
-		}) 
-		.success (function(response)
-		{
-			if(response.response == false)
-			{
-				alert("Problem Inserting data");
-			}else{
-					getDataFromDb.read_data().then(function(response) {
-					$scope.students = response;
-    			}); 
-			}
-			$scope.empInfo.name = '';
-			$scope.empInfo.salary = '';
-		}); 
-	}
-});
+	}*/
 </script>
