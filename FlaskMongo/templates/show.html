@@ -1,1 +1,8 @@
-saasa
+<h3>DASHBOARD</h3>
+{% for res in result: %}
+	{{ res['name'] }}
+	{{ res['org']  }}<br><br>
+{% endfor %}
+<a href="{{ url_for('insertdata') }}">Insert Blog</a>
+<a href="{{ url_for('deleteData') }}">delete Blog</a>
+
